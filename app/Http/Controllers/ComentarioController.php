@@ -2,85 +2,141 @@
 
 namespace App\Http\Controllers;
 
+use App\Custom\SentComentario;
 use App\Models\Comentario;
+use App\Models\User;
+use App\Models\Reserva;
+use App\Models\Vacation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
-class ComentarioController extends Controller
-{
-    /**
-     * Guarda un nuevo comentario (solo si ha reservado)
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'idvacacion' => 'required|exists:vacaciones,id',
-            'texto' => 'required|string|min:10|max:1000'
+class ComentarioController extends Controller {
+    
+    function create(): View {
+    }
+
+    function destroy(Comentario $comentario): RedirectResponse {
+        try {
+            $result = $comentario->delete();
+            $message = 'Se ha eliminado la observación';
+        } catch(\Exception $e) {
+            dd($e);
+            $result = false;
+            $message = 'La comentario no ha podido borrarse correctamente.';
+        }
+        $messageArray = [
+            'general' => $message
+        ];
+        if($result) {
+            return back()->with($messageArray);
+        } else {
+            return back()->withInput()->withErrors($messageArray);
+        }
+
+    }
+
+    function edit(Comentario $comentario): View {
+        // Eliminamos Asignatura y Estudiante que no pertenecen aquí
+        $vacation = $comentario->vacation; 
+        return view('comentario.edit', [
+            'comentario' => $comentario, 
+            'vacation'   => $vacation
+        ]);
+    }
+    
+    function index(): View {
+    }
+
+    function show(Comentario $comentario): View {
+    }
+
+    public function store(Request $request) {
+        // 1. Validación de los datos del formulario
+        $request->validate([
+            'content' => 'required|min:5|max:1000',
+            'idvacation' => 'required|exists:vacation,id'
         ]);
 
-        try {
-            // Verificar que el usuario ha reservado esta vacación
-            $haReservado = Auth::user()->haReservado($validated['idvacacion']);
-            
-            if (!$haReservado) {
-                return back()->with('error', 'Debes reservar esta vacación antes de comentar.');
-            }
+        // 2. Seguridad: ¿Tiene el correo verificado?
+        if (!auth()->user()->hasVerifiedEmail()) {
+            return back()->withErrors(['general' => 'Debes verificar tu correo para poder comentar.']);
+        }
 
-            Comentario::create([
-                'iduser' => Auth::id(),
-                'idvacacion' => $validated['idvacacion'],
-                'texto' => $validated['texto']
+        // 3. Seguridad: ¿Ha reservado este viaje específico?
+        $haReservado = Reserva::where('iduser', auth()->id())
+                        ->where('idvacation', $request->idvacation)
+                        ->exists();
+
+        if (!$haReservado) {
+            return back()->withErrors(['general' => 'Solo puedes comentar en viajes que hayas reservado previamente.']);
+        }
+
+        // 4. Guardamos en la base de datos
+        $comentario = new Comentario();
+        $comentario->idvacation = $request->idvacation;
+        $comentario->texto = $request->content;
+        $comentario->iduser = auth()->id();
+        $comentario->save(); // <--- AQUÍ el comentario recibe su ID
+
+        // 5. Gestión de la sesión para edición/borrado rápido
+        $sentComentario = session()->get('sentComentario', new SentComentario());
+        $sentComentario->addComentario($comentario);
+        session()->put('sentComentario', $sentComentario); 
+
+        return back()->with('general', '¡Gracias por tu opinión! Tu comentario ha sido añadido.');
+    }
+    
+    public function update(Request $request, Comentario $comentario): RedirectResponse {
+        // 1. Validación de los datos
+        $request->validate([
+            'texto' => 'required|string|min:5',
+        ]);
+
+        // 2. Seguridad: Comprobar sesión (SentComentario) y Autoría
+        $sentComentario = session()->get('sentComentario');
+        
+        // Verificamos si existe el objeto en sesión y si el comentario es "editable"
+        if (!$sentComentario || !$sentComentario->isComentario($comentario)) {
+            return redirect()->route('main.index')->withErrors([
+                'general' => 'No puedes editar este comentario: la sesión ha expirado o no tienes permiso.'
             ]);
-
-            return back()->with('success', 'Comentario publicado exitosamente.');
-            
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al publicar el comentario: ' . $e->getMessage());
         }
-    }
 
-    /**
-     * Actualiza un comentario (solo el propietario)
-     */
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'texto' => 'required|string|min:10|max:1000'
-        ]);
-
-        try {
-            $comentario = Comentario::where('id', $id)
-                ->where('iduser', Auth::id())
-                ->firstOrFail();
-
-            $comentario->update($validated);
-
-            return back()->with('success', 'Comentario actualizado exitosamente.');
-            
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al actualizar el comentario: ' . $e->getMessage());
+        // Doble check: solo el dueño puede editar (aunque esté en sesión)
+        if ($comentario->iduser != auth()->id()) {
+            return redirect()->route('main.index')->withErrors([
+                'general' => 'Acción no autorizada.'
+            ]);
         }
-    }
 
-    /**
-     * Elimina un comentario (solo el propietario o admin)
-     */
-    public function destroy($id)
-    {
+        $result = false;
         try {
-            $comentario = Comentario::findOrFail($id);
+            // Mapeamos los datos del request al modelo
+            $comentario->texto = $request->texto;
 
-            // Solo el propietario o admin pueden eliminar
-            if ($comentario->iduser != Auth::id() && !Auth::user()->isAdmin()) {
-                abort(403, 'No tienes permiso para eliminar este comentario.');
+            if ($comentario->isDirty()) { 
+                $result = $comentario->save();
+                $message = 'El comentario ha sido editado correctamente.';
+            } else {
+                $result = true; 
+                $message = 'No se realizaron cambios en el comentario.';
             }
-
-            $comentario->delete();
-
-            return back()->with('success', 'Comentario eliminado exitosamente.');
             
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al eliminar el comentario: ' . $e->getMessage());
+        } catch(\Exception $e) {
+            // En producción es mejor loguear el error y no mostrar el dd($e)
+            \Log::error("Error editando comentario: " . $e->getMessage());
+            $message = 'Se ha producido un error al intentar guardar los cambios.';
+        }
+
+        $messageArray = ['general' => $message];
+
+        if ($result) {
+            // Redirigimos de vuelta a la ficha del destino de vacaciones
+            return redirect()->route('vacation.show', $comentario->idvacation)->with($messageArray);
+        } else {
+            return back()->withInput()->withErrors($messageArray);
         }
     }
+
 }

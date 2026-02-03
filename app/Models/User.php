@@ -1,64 +1,74 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Models;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class HomeController extends Controller
+class User extends Authenticatable implements MustVerifyEmail
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
+
     /**
-     * Mostrar página principal
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
      */
-    public function index(): View
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role'
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return view('home');
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
-    /**
-     * Mostrar formulario de edición
-     */
-    public function edit(): View
-    {
-        return view('auth.edit');
+    function reservas(): HasMany {
+        return $this->hasMany('App\Models\Reserva', 'iduser');
     }
 
-    /**
-     * Actualizar datos del usuario
-     */
-    public function update(Request $request): RedirectResponse
-    {
-        // Validación de entrada
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
-        ], [
-            'name.required' => 'El nombre es obligatorio',
-            'name.max' => 'El nombre no puede tener más de 255 caracteres',
-            'email.required' => 'El email es obligatorio',
-            'email.email' => 'El email debe ser válido',
-            'email.unique' => 'Este email ya está registrado',
-        ]);
+    function vacations(): HasMany {
+        return $this->hasMany('App\Models\Vacation', 'iduser');
+    }
 
-        try {
-            // Usar DB para actualizar directamente
-            DB::table('users')
-                ->where('id', Auth::id())
-                ->update([
-                    'name' => $validated['name'],
-                    'email' => $validated['email'],
-                    'updated_at' => now(),
-                ]);
+    function cometario(): HasMany {
+        return $this->hasMany('App\Models\Comentario', 'iduser');
+    }
 
-            return redirect()->route('home')->with('success', 'Usuario guardado correctamente');
-            
-        } catch (\Exception $e) {
-            return redirect()->route('home')->with('error', 'Error al guardar: ' . $e->getMessage());
-        }
+    public function isAdmin(): bool {
+        return $this->role === 'admin';
+    }
+
+    public function isAdvanced(): bool {
+        return in_array($this->role, ['advanced', 'admin']);
+    }
+
+    public function isUser(): bool {
+        return in_array($this->role, ['user', 'advanced', 'admin']);
     }
 }

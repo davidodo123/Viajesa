@@ -5,23 +5,13 @@ namespace Database\Seeders;
 use App\Models\Tipo;
 use Illuminate\Database\Seeder;
 
-class TipoSeeder extends Seeder
-{
+class TipoSeeder extends Seeder {
     public function run(): void
     {
-        $tipos = [
-            ['nombre' => 'Playa'],
-            ['nombre' => 'Montaña'],
-            ['nombre' => 'Ciudad'],
-            ['nombre' => 'Aventura'],
-            ['nombre' => 'Relax'],
-            ['nombre' => 'Cultural'],
-            ['nombre' => 'Deportivo'],
-            ['nombre' => 'Familiar'],
-        ];
+        $categorias = ['Playa', 'Montaña', 'Ciudad', 'Aventura', 'Crucero', 'Relax'];
 
-        foreach ($tipos as $tipo) {
-            Tipo::create($tipo);
+        foreach ($categorias as $nombre) {
+            Tipo::create(['nombre' => $nombre]);
         }
     }
 }

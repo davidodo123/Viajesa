@@ -2,20 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Foto extends Model
 {
-    use HasFactory;
+    protected $table = 'foto';
 
-    protected $fillable = ['idvacacion', 'ruta'];
+    protected $fillable = [
+        'idvacation',
+        'path',
+    ];
 
-    /**
-     * Relación: Una foto pertenece a una vacación
-     */
-    public function vacacion()
-    {
-        return $this->belongsTo(Vacacion::class, 'idvacacion');
+    function vacation(): BelongsTo {
+        return $this->belongsTo('App\Models\Vacation', 'idvacation');
+    }
+
+    public function getPath() {
+        // Si el path empieza por http, es una imagen de internet
+        if (str_starts_with($this->path, 'http')) {
+            return $this->path;
+        }
+        // Si no, es una imagen local guardada en storage
+        return asset('storage/' . $this->path);
     }
 }

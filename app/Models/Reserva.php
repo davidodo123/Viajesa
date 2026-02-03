@@ -2,28 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Reserva extends Model
 {
-    use HasFactory;
+    protected $table = 'reserva';
 
-    protected $fillable = ['iduser', 'idvacacion'];
+    //los campos que se rellenan manualmente
+    protected $fillable = [
+        'idvacation',
+        'iduser',
+    ];
 
-    /**
-     * Relación: Una reserva pertenece a un usuario
-     */
-    public function usuario()
-    {
-        return $this->belongsTo(User::class, 'iduser');
+    function vacation(): BelongsTo {
+        return $this->belongsTo('App\Models\Vacation', 'idvacation');
     }
 
-    /**
-     * Relación: Una reserva pertenece a una vacación
-     */
-    public function vacacion()
-    {
-        return $this->belongsTo(Vacacion::class, 'idvacacion');
+    function user(): BelongsTo {
+        return $this->belongsTo('App\Models\User', 'iduser');
     }
+
 }

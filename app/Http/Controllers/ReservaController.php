@@ -3,94 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reserva;
-use App\Models\Vacacion;
+use App\Models\Vacation;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class ReservaController extends Controller
 {
-    /**
-     * Realiza una reserva (requiere email verificado)
-     */
-    public function store(Request $request)
+
+    public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'idvacacion' => 'required|exists:vacaciones,id'
+        // 1. Validación básica
+        $request->validate([
+            'idvacation' => 'required|exists:vacation,id',
         ]);
 
+        $idvacation = $request->idvacation;
+        $iduser = Auth::id();
+
+        // 2. Seguridad: Verificar si el viaje ya está reservado por CUALQUIER usuario
+        $yaReservado = Reserva::where('idvacation', $idvacation)->exists();
+
+        if ($yaReservado) {
+            return back()->withErrors([
+                'general' => 'Lo sentimos, este destino acaba de ser reservado por otro usuario.'
+            ]);
+        }
+
+        // 3. Crear la reserva
         try {
-            // Verificar que no exista ya una reserva
-            $existente = Reserva::where('iduser', Auth::id())
-                ->where('idvacacion', $validated['idvacacion'])
-                ->first();
-
-            if ($existente) {
-                return back()->with('warning', 'Ya has reservado esta vacación.');
-            }
-
             Reserva::create([
-                'iduser' => Auth::id(),
-                'idvacacion' => $validated['idvacacion']
+                'idvacation' => $idvacation,
+                'iduser' => $iduser,
             ]);
 
-            return back()->with('success', '¡Reserva realizada con éxito!');
-            
+            return back()->with('general', '¡Reserva confirmada! Prepara tus maletas.');
+
         } catch (\Exception $e) {
-            return back()->with('error', 'Error al realizar la reserva: ' . $e->getMessage());
+            return back()->withErrors([
+                'general' => 'Hubo un error al procesar tu reserva. Inténtalo de nuevo.'
+            ]);
         }
     }
 
-    /**
-     * Muestra las reservas del usuario autenticado
-     */
-    public function misReservas()
+    public function destroy(Reserva $reserva): RedirectResponse
     {
-        try {
-            $reservas = Reserva::with(['vacacion.fotos', 'vacacion.tipo'])
-                ->where('iduser', Auth::id())
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-
-            return view('reservas.mis-reservas', compact('reservas'));
-            
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al cargar las reservas: ' . $e->getMessage());
+        // Seguridad: Solo el dueño de la reserva puede cancelarla
+        if ($reserva->iduser !== Auth::id()) {
+            return back()->withErrors(['general' => 'No tienes permiso para cancelar esta reserva.']);
         }
-    }
 
-    /**
-     * Cancela una reserva
-     */
-    public function destroy($id)
-    {
-        try {
-            $reserva = Reserva::where('id', $id)
-                ->where('iduser', Auth::id())
-                ->firstOrFail();
+        $reserva->delete();
 
-            $reserva->delete();
-
-            return back()->with('success', 'Reserva cancelada exitosamente.');
-            
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al cancelar la reserva: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Lista todas las reservas (solo admin)
-     */
-    public function index()
-    {
-        try {
-            $reservas = Reserva::with(['usuario', 'vacacion'])
-                ->orderBy('created_at', 'desc')
-                ->paginate(20);
-
-            return view('reservas.index', compact('reservas'));
-            
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al cargar las reservas: ' . $e->getMessage());
-        }
+        return back()->with('general', 'Tu reserva ha sido cancelada correctamente.');
     }
 }

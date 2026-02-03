@@ -10,14 +10,17 @@ use Symfony\Component\HttpFoundation\Response;
 class AdvancedMiddleware
 {
     /**
-     * Verifica que el usuario sea advanced o admin
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || !Auth::user()->isAdvanced()) {
-            abort(403, 'No tienes permisos para acceder a esta sección.');
+        $user = Auth::user();
+        if($user != null && ($user->isAdmin() || $user->isAdvanced())) {
+            return $next($request);
+        } else {
+            return redirect()->route('main.index')->withErrors(['general' => 'Acceso restringido.']);
         }
-
-        return $next($request);
     }
 }

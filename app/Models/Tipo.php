@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tipo extends Model
 {
-    use HasFactory;
+    protected $table = 'tipo';
 
-    protected $fillable = ['nombre'];
+    //los campos que se rellenan manualmente
+    protected $fillable = [
+        'nombre',
+    ];
 
-    /**
-     * Relación: Un tipo tiene muchas vacaciones
-     */
-    public function vacaciones()
-    {
-        return $this->hasMany(Vacacion::class, 'idtipo');
+    
+    function vacations() {
+        return $this->hasMany('App\Models\Vacation', 'idtipo');
     }
+
 }
