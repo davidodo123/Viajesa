@@ -77,25 +77,25 @@
 
 <div class="container mt-4">
   <div class="row">
-    @forelse($vacations as $vacation)
+    @forelse($vacaciones as $vacacion)
         <div class="col-md-4 mb-4">
           <div class="card h-100">
-              <span class="travel-badge"><i class="fa-solid fa-location-dot me-1"></i> {{ $vacation->pais }}</span>
-              <img class="card-img-top" src="{{ $vacation->foto ? $vacation->foto->getPath() : asset('assets/img/sin-foto.jpg') }}">
+              <span class="travel-badge"><i class="fa-solid fa-location-dot me-1"></i> {{ $vacacion->pais }}</span>
+              <img class="card-img-top" src="{{ $vacacion->foto ? $vacacion->foto->getPath() : asset('assets/img/sin-foto.jpg') }}">
               
               <div class="card-body p-4">
-                  <h5 class="card-title">{{ $vacation->titulo }}</h5>
-                  <p class="text-muted small mb-3">{{ Str::limit($vacation->descripcion, 80) }}</p>
+                  <h5 class="card-title">{{ $vacacion->titulo }}</h5>
+                  <p class="text-muted small mb-3">{{ Str::limit($vacacion->descripcion, 80) }}</p>
                   <div class="d-flex justify-content-between align-items-center">
-                      <div class="travel-price">{{ number_format($vacation->precio, 0) }}€</div>
-                      <a class="badge bg-light text-primary" style="text-decoration: none;" href="{{ route('vacation.tipo', $vacation->idtipo) }}">{{ $vacation->tipo->nombre }}</a>
+                      <div class="travel-price">{{ number_format($vacacion->precio, 0) }}€</div>
+                      <a class="badge bg-light text-primary" style="text-decoration: none;" href="{{ route('vacacion.tipo', $vacacion->idtipo) }}">{{ $vacacion->tipo?->nombre ?? 'Sin tipo' }}</a>
                   </div>
               </div>
               <div class="card-footer bg-white border-0 pb-4 px-4 d-flex gap-2">
-                  <a href="{{ route('vacation.show', $vacation->id) }}" class="btn btn-sm btn-outline-primary w-100">Detalles</a>
+                  <a href="{{ route('vacacion.show', $vacacion->id) }}" class="btn btn-sm btn-outline-primary w-100">Detalles</a>
                   @auth
                     @if(Auth::user()->isAdvanced())
-                      <a href="{{ route('vacation.edit', $vacation->id) }}" class="btn btn-sm btn-outline-secondary" style="display: flex; gap:.4rem; align-items: center;">
+                      <a href="{{ route('vacacion.edit', $vacacion->id) }}" class="btn btn-sm btn-outline-secondary" style="display: flex; gap:.4rem; align-items: center;">
                         <i class="fa-solid fa-pen"></i>Editar
                       </a>
                     @endif
@@ -116,7 +116,7 @@
 </div>
 
 <div class="d-flex justify-content-center mt-5">
-    {{ $vacations->onEachSide(2)->links() }}
+    {{ $vacaciones->onEachSide(2)->links() }}
 </div>
 
 @endsection

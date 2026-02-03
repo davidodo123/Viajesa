@@ -39,7 +39,7 @@
 
                 {{-- SECCIÓN 2: MIS RESERVAS --}}
                 <div class="d-flex align-items-center mb-4">
-                    <h3 class="fw-bold mb-0"><i class="fa-solid fa-suitcase-rolling text-primary me-2"></i>Mis próximos viajes</h3>
+                    <h3 class="fw-bold mb-0"></i>Mis próximos viajes</h3>
                 </div>
 
                 @if(Auth::user()->reservas->count() > 0)
@@ -59,13 +59,13 @@
                                         <tr>
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
-                                                    <img src="{{ $reserva->vacation->foto ? $reserva->vacation->foto->getPath() : asset('assets/img/sin-foto.jpg') }}" 
+                                                    <img src="{{ $reserva->vacacion->foto ? $reserva->vacacion->foto->getPath() : asset('assets/img/sin-foto.jpg') }}" 
                                                         class="rounded-3 me-3" 
                                                         style="width: 60px; height: 60px; object-fit: cover;">
                                                     <div>
-                                                        <div class="fw-bold text-dark">{{ $reserva->vacation->titulo }}</div>
+                                                        <div class="fw-bold text-dark">{{ $reserva->vacacion->titulo }}</div>
                                                         <div class="text-muted small">
-                                                            <i class="fa-solid fa-location-dot me-1 text-danger"></i>{{ $reserva->vacation->pais }}
+                                                            <i class="fa-solid fa-location-dot me-1 text-danger"></i>{{ $reserva->vacacion->pais }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -74,11 +74,11 @@
                                                 {{ $reserva->created_at->format('d/m/Y') }}
                                             </td>
                                             <td class="text-center">
-                                                <span class="fw-bold text-primary fs-5">{{ number_format($reserva->vacation->precio, 0) }}€</span>
+                                                <span class="fw-bold text-primary fs-5">{{ number_format($reserva->vacacion->precio, 0) }}€</span>
                                             </td>
                                             <td class="text-end pe-4">
                                                 <div class="d-flex justify-content-end gap-2">
-                                                    <a href="{{ route('vacation.show', $reserva->idvacation) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                                    <a href="{{ route('vacacion.show', $reserva->idvacation) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </a>
                                                     <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" 
@@ -96,7 +96,7 @@
                 @else
                     <div class="text-center py-5 bg-white shadow-sm rounded-4 border border-dashed">
                         <div class="mb-3">
-                            <i class="fa-solid fa-plane-departure display-1 text-light"></i>
+                            
                         </div>
                         <h5 class="text-muted">¿Aún no has planeado nada?</h5>
                         <p class="text-muted small">Descubre los mejores destinos y reserva tu próxima aventura.</p>

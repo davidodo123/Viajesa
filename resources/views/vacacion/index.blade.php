@@ -27,11 +27,11 @@
     <div class="d-flex justify-content-between align-items-end mb-4">
         <div>
             <h1 class="display-6 fw-bold text-primary mb-0">Gestión de Destinos</h1>
-            <p class="text-muted">Tienes un total de <strong>{{ count($vacations) }}</strong> paquetes vacacionales activos.</p>
+            <p class="text-muted">Tienes un total de <strong>{{ count($vacaciones) }}</strong> paquetes vacacionales activos.</p>
         </div>
         @auth
             @if(Auth::user()->isAdvanced())
-            <a href="{{ route('vacation.create') }}" class="btn btn-primary btn-lg shadow-sm">
+            <a href="{{ route('vacacion.create') }}" class="btn btn-primary btn-lg shadow-sm">
                 <i class="fa-solid fa-plus me-2"></i>Nuevo Destino
             </a>
             @endif
@@ -52,42 +52,42 @@
                     </tr>
                 </thead>
                 <tbody> 
-                    @forelse($vacations as $vacation)
+                    @forelse($vacaciones as $vacacion)
                     <tr>
-                        <td class="ps-4 fw-bold text-muted">{{ $vacation->id }}</td>
+                        <td class="ps-4 fw-bold text-muted">{{ $vacacion->id }}</td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <img src="{{ $vacation->foto ? $vacation->foto->getPath() : asset('assets/img/sin-foto.jpg') }}" 
-                                     alt="{{ $vacation->titulo }}"
+                                <img src="{{ $vacacion->foto ? $vacacion->foto->getPath() : asset('assets/img/sin-foto.jpg') }}" 
+                                     alt="{{ $vacacion->titulo }}"
                                      class="rounded-3 shadow-sm me-3"
                                      style="height: 55px; width: 55px; object-fit: cover;">
                                 <div>
-                                    <div class="fw-bold text-dark">{{ $vacation->titulo }}</div>
-                                    <div class="small text-muted"><i class="fa-solid fa-location-dot me-1"></i>{{ $vacation->pais }}</div>
+                                    <div class="fw-bold text-dark">{{ $vacacion->titulo }}</div>
+                                    <div class="small text-muted"><i class="fa-solid fa-location-dot me-1"></i>{{ $vacacion->pais }}</div>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <span class="badge rounded-pill bg-info-subtle text-info px-3 border border-info-subtle">
-                                <i class="fa-solid fa-tag me-1 small"></i><a class="text-primary" style="text-decoration: none;" href="{{ route('vacation.tipo', $vacation->idtipo) }}">{{ $vacation->tipo->nombre }}</a>
+                                <i class="fa-solid fa-tag me-1 small"></i><a class="text-primary" style="text-decoration: none;" href="{{ route('vacacion.tipo', $vacacion->idtipo) }}">{{ $vacacion->tipo->nombre }}</a>
                             </span>
                         </td>
                         <td>
-                            <div class="fw-bold text-primary fs-5">{{ number_format($vacation->precio, 2) }}€</div>
+                            <div class="fw-bold text-primary fs-5">{{ number_format($vacacion->precio, 2) }}€</div>
                         </td>
                         <td class="text-center pe-4">
                             <div class="btn-group shadow-sm rounded">
-                                <a href="{{ route('vacation.show', $vacation->id) }}" class="btn btn-white btn-sm px-3 border" title="Ver detalle">
+                                <a href="{{ route('vacacion.show', $vacacion->id) }}" class="btn btn-white btn-sm px-3 border" title="Ver detalle">
                                     <i class="fa-solid fa-eye text-success"></i> Ver
                                 </a>
                                 @auth
                                     @if(Auth::user()->isAdvanced())
-                                    <a href="{{ route('vacation.edit', $vacation->id) }}" class="btn btn-white btn-sm px-3 border" title="Editar">
+                                    <a href="{{ route('vacacion.edit', $vacacion->id) }}" class="btn btn-white btn-sm px-3 border" title="Editar">
                                         <i class="fa-solid fa-pen-to-square text-warning"></i> Editar
                                     </a>
                                     <button type="button" 
                                             class="btn btn-white btn-sm px-3 border" 
-                                            data-href="{{ route('vacation.destroy', $vacation->id) }}" 
+                                            data-href="{{ route('vacacion.destroy', $vacacion->id) }}" 
                                             data-bs-toggle="modal" 
                                             data-bs-target="#deleteModal" 
                                             title="Eliminar">
@@ -102,7 +102,7 @@
                     <tr>
                         <td colspan="5" class="text-center py-5">
                             <div class="text-muted">
-                                <i class="fa-solid fa-plane-slash display-4 mb-3"></i>
+                                
                                 <p class="fs-5">No se encontraron destinos registrados.</p>
                             </div>
                         </td>

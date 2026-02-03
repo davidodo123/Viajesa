@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(del \"c:\\\\Users\\\\david\\\\Desktop\\\\Viajesa\\\\database\\\\seeders\\\\VacationSeeder.php\")"
+    ]
+  }
+}

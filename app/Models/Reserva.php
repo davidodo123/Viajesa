@@ -15,8 +15,8 @@ class Reserva extends Model
         'iduser',
     ];
 
-    function vacation(): BelongsTo {
-        return $this->belongsTo('App\Models\Vacation', 'idvacation');
+    function vacacion(): BelongsTo {
+        return $this->belongsTo(Vacacion::class, 'idvacation');
     }
 
     function user(): BelongsTo {

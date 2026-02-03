@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Vacation;
+use App\Models\Vacacion;
 use App\Models\Tipo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -28,9 +28,9 @@ class MainController extends Controller
     }
 
     function indexOld(): View {
-        $vacations = Vacation::orderBy('precio', 'desc')->get();
+        $vacaciones = Vacacion::orderBy('precio', 'desc')->get();
         
-        $array = ['vacations' => $vacations, ]; 
+        $array = ['vacaciones' => $vacaciones, ]; 
 
         return view('main.index', $array); 
 
@@ -43,7 +43,7 @@ class MainController extends Controller
         $idtipo = $request->idtipo;
 
         // 2. Construcción de la consulta
-        $query = Vacation::query()->with(['tipo', 'foto']);
+        $query = Vacacion::query()->with(['tipo', 'foto']);
 
         // Filtro por Tipo (Categoría)
         if($idtipo != null) {
@@ -70,13 +70,13 @@ class MainController extends Controller
         }
 
         // 4. Paginación manteniendo los filtros
-        $vacations = $query->paginate(6)->withQueryString();
+        $vacaciones = $query->paginate(6)->withQueryString();
         
         // Obtener tipos para el select (pluck devuelve formato [id => nombre])
         $tipos = Tipo::pluck('nombre', 'id');
 
         return view('main.index', [
-            'vacations'  => $vacations,
+            'vacaciones'  => $vacaciones,
             'tipos'      => $tipos,
             'campo'      => $campo,
             'orden'      => $orden,

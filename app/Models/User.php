@@ -52,8 +52,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany('App\Models\Reserva', 'iduser');
     }
 
-    function vacations(): HasMany {
-        return $this->hasMany('App\Models\Vacation', 'iduser');
+    function vacaciones(): HasMany {
+        return $this->hasMany(Vacacion::class, 'iduser');
     }
 
     function cometario(): HasMany {

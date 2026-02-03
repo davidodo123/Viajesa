@@ -6,7 +6,7 @@ use App\Custom\SentComentario;
 use App\Models\Comentario;
 use App\Models\User;
 use App\Models\Reserva;
-use App\Models\Vacation;
+use App\Models\Vacacion;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -38,10 +38,10 @@ class ComentarioController extends Controller {
 
     function edit(Comentario $comentario): View {
         // Eliminamos Asignatura y Estudiante que no pertenecen aquí
-        $vacation = $comentario->vacation; 
+        $vacacion = $comentario->vacacion;
         return view('comentario.edit', [
-            'comentario' => $comentario, 
-            'vacation'   => $vacation
+            'comentario' => $comentario,
+            'vacacion'   => $vacacion
         ]);
     }
     
@@ -55,7 +55,7 @@ class ComentarioController extends Controller {
         // 1. Validación de los datos del formulario
         $request->validate([
             'content' => 'required|min:5|max:1000',
-            'idvacation' => 'required|exists:vacation,id'
+            'idvacation' => 'required|exists:vacacion,id'
         ]);
 
         // 2. Seguridad: ¿Tiene el correo verificado?
@@ -133,7 +133,7 @@ class ComentarioController extends Controller {
 
         if ($result) {
             // Redirigimos de vuelta a la ficha del destino de vacaciones
-            return redirect()->route('vacation.show', $comentario->idvacation)->with($messageArray);
+            return redirect()->route('vacacion.show', $comentario->idvacation)->with($messageArray);
         } else {
             return back()->withInput()->withErrors($messageArray);
         }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('idvacation');
             $table->timestamps();
             $table->foreign('iduser')->references('id')->on('users');
-            $table->foreign('idvacation')->references('id')->on('vacation');
+            $table->foreign('idvacation')->references('id')->on('vacacion');
         });
     }
 

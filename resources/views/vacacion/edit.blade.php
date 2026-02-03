@@ -7,14 +7,14 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="display-6 fw-bold text-primary mb-0">Editar Destino</h1>
-                    <p class="text-muted">Modificando: <strong>{{ $vacation->titulo }}</strong></p>
+                    <p class="text-muted">Modificando: <strong>{{ $vacacion->titulo }}</strong></p>
                 </div>
-                <a href="{{ route('vacation.show', $vacation->id) }}" class="btn btn-outline-primary shadow-sm">
+                <a href="{{ route('vacacion.show', $vacacion->id) }}" class="btn btn-outline-primary shadow-sm">
                     <i class="fa-solid fa-eye me-2"></i>Ver Actual
                 </a>
             </div>
 
-            <form action="{{ route('vacation.update', $vacation->id) }}" method="POST" enctype="multipart/form-data" class="row g-4">
+            <form action="{{ route('vacacion.update', $vacacion->id) }}" method="POST" enctype="multipart/form-data" class="row g-4">
                 @csrf
                 @method('put')
 
@@ -37,24 +37,24 @@
                         <div class="mb-3">
                             <label for="titulo" class="form-label fw-semibold">Título</label>
                             <input type="text" class="form-control" id="titulo" name="titulo" 
-                                   value="{{ old('titulo', $vacation->titulo) }}" required>
+                                   value="{{ old('titulo', $vacacion->titulo) }}" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="descripcion" class="form-label fw-semibold">Descripción Detallada</label>
-                            <textarea class="form-control" name="descripcion" id="descripcion" rows="8" required>{{ old('descripcion', $vacation->descripcion) }}</textarea>
+                            <textarea class="form-control" name="descripcion" id="descripcion" rows="8" required>{{ old('descripcion', $vacacion->descripcion) }}</textarea>
                         </div>
 
                         <div class="row g-3">
                             <div class="col-sm-6">
                                 <label for="pais" class="form-label fw-semibold">País</label>
-                                <input type="text" class="form-control" id="pais" name="pais" value="{{ old('pais', $vacation->pais) }}" required>
+                                <input type="text" class="form-control" id="pais" name="pais" value="{{ old('pais', $vacacion->pais) }}" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="idtipo" class="form-label fw-semibold">Categoría</label>
                                 <select required name="idtipo" id="idtipo" class="form-select">
                                     @foreach($tipos as $idTipo => $nombreTipo)
-                                        <option value="{{ $idTipo }}" @selected($idTipo == old("idtipo", $vacation->idtipo))>
+                                        <option value="{{ $idTipo }}" @selected($idTipo == old("idtipo", $vacacion->idtipo))>
                                             {{ $nombreTipo }}
                                         </option>
                                     @endforeach
@@ -72,7 +72,7 @@
                             <div class="input-group input-group-lg">
                                 <span class="input-group-text border-0 bg-white text-primary fw-bold">€</span>
                                 <input type="number" class="form-control border-0" id="precio" name="precio" 
-                                       step=".1" value="{{ old('precio', $vacation->precio) }}" required>
+                                       step=".1" value="{{ old('precio', $vacacion->precio) }}" required>
                             </div>
                             <small class="mt-2 opacity-75">Este precio se mostrará como "desde" en el catálogo.</small>
                         </div>
@@ -83,7 +83,7 @@
                             <div id="drop-zone" class="p-3 text-center border-dashed mb-3">
                                 <p class="small text-muted mb-3" id="drop-text">Arrastra para actualizar la imagen</p>
                                 <img id="preview" 
-                                    src="{{ $vacation->foto ? $vacation->foto->getPath() : asset('assets/img/sin-foto.jpg') }}"
+                                    src="{{ $vacacion->foto ? $vacacion->foto->getPath() : asset('assets/img/sin-foto.jpg') }}"
                                     alt="Vista previa"
                                     class="img-fluid rounded shadow-sm mb-3"
                                     style="max-height: 150px; object-fit: cover;">
@@ -95,7 +95,7 @@
 
                             <input type="file" id="image" name="image" accept="image/*" class="d-none">
 
-                            @if($vacation->foto)
+                            @if($vacacion->foto)
                                 <div class="form-check form-switch p-3 bg-light rounded border border-danger-subtle">
                                     <input class="form-check-input ms-0 me-2" type="checkbox" name="delete_image" id="delete_image">
                                     <label class="form-check-label text-danger fw-bold" for="delete_image">

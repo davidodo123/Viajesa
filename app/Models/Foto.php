@@ -14,8 +14,8 @@ class Foto extends Model
         'path',
     ];
 
-    function vacation(): BelongsTo {
-        return $this->belongsTo('App\Models\Vacation', 'idvacation');
+    function vacacion(): BelongsTo {
+        return $this->belongsTo(Vacacion::class, 'idvacation');
     }
 
     public function getPath() {

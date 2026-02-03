@@ -9,7 +9,7 @@
                 <p class="text-muted">Completa los detalles para inspirar a tu próximo viajero.</p>
             </div>
 
-            <form action="{{ route('vacation.store') }}" method="POST" enctype="multipart/form-data" class="row g-4">
+            <form action="{{ route('vacacion.store') }}" method="POST" enctype="multipart/form-data" class="row g-4">
                 @csrf
 
                 {{-- Errores de Validación --}}
@@ -100,9 +100,9 @@
 
                 <div class="col-12 mt-4 text-center">
                     <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
-                        <i class="fa-solid fa-paper-plane me-2"></i>Publicar Destino
+                        Publicar Destino
                     </button>
-                    <a href="{{ route('vacation.index') }}" class="btn btn-link text-muted ms-3 text-decoration-none">Cancelar y volver</a>
+                    <a href="{{ route('vacacion.index') }}" class="btn btn-link text-muted ms-3 text-decoration-none">Cancelar y volver</a>
                 </div>
             </form>
         </div>

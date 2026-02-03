@@ -8,8 +8,8 @@ use App\Http\Controllers\VacationController;
 
 Route::get('/', [MainController::class, 'index'])->name('main.index');
 
-Route::resource('vacation', VacationController::class);
-Route::get('vacation/tipo/{tipo}', [VacationController::class, 'tipo'])->name('vacation.tipo');
+Route::resource('vacacion', VacationController::class);
+Route::get('vacacion/tipo/{tipo}', [VacationController::class, 'tipo'])->name('vacacion.tipo');
 
 
 Route::resource('comentario', ComentarioController::class);

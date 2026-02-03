@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('idvacation');
             $table->string('path', 100)->nullable();
             $table->timestamps();
-            $table->foreign('idvacation')->references('id')->on('vacation');
+            $table->foreign('idvacation')->references('id')->on('vacacion');
         });
     }
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reserva;
-use App\Models\Vacation;
+use App\Models\Vacacion;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +15,7 @@ class ReservaController extends Controller
     {
         // 1. Validación básica
         $request->validate([
-            'idvacation' => 'required|exists:vacation,id',
+            'idvacation' => 'required|exists:vacacion,id',
         ]);
 
         $idvacation = $request->idvacation;

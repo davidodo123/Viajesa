@@ -18,7 +18,7 @@ return new class extends Migration
             $table->longText('texto');
             $table->timestamps();
             $table->foreign('iduser')->references('id')->on('users');
-            $table->foreign('idvacation')->references('id')->on('vacation');
+            $table->foreign('idvacation')->references('id')->on('vacacion');
         });
     }
 

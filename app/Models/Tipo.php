@@ -15,8 +15,8 @@ class Tipo extends Model
     ];
 
     
-    function vacations() {
-        return $this->hasMany('App\Models\Vacation', 'idtipo');
+    function vacaciones() {
+        return $this->hasMany(Vacacion::class, 'idtipo');
     }
 
 }

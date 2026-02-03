@@ -26,13 +26,13 @@
     <div class="col-lg-5 mb-4">
         <div class="card border-0 shadow-sm overflow-hidden">
             <img class="img-fluid" 
-                 src="{{ $vacation->foto ? $vacation->foto->getPath() : asset('assets/img/sin-foto.jpg') }}" 
-                 alt="{{ $vacation->titulo }}"
+                 src="{{ $vacacion->foto ? $vacacion->foto->getPath() : asset('assets/img/sin-foto.jpg') }}" 
+                 alt="{{ $vacacion->titulo }}"
                  style="width: 100%; height: 450px; object-fit: cover;">
             <div class="card-body bg-primary text-white p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="text-uppercase small fw-bold">Precio desde</span>
-                    <h2 class="mb-0">{{ number_format($vacation->precio, 2) }}€</h2>
+                    <h2 class="mb-0">{{ number_format($vacacion->precio, 2) }}€</h2>
                 </div>
             </div>
         </div>
@@ -44,30 +44,30 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('main.index') }}">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('vacation.index') }}">Destinos</a></li>
-                    <li class="breadcrumb-item active">{{ $vacation->titulo }}</li>
+                    <li class="breadcrumb-item"><a href="{{ route('vacacion.index') }}">Destinos</a></li>
+                    <li class="breadcrumb-item active">{{ $vacacion->titulo }}</li>
                 </ol>
             </nav>
             
-            <h1 class="display-4 fw-bold mb-3">{{ $vacation->titulo }}</h1>
+            <h1 class="display-4 fw-bold mb-3">{{ $vacacion->titulo }}</h1>
             
             <div class="d-flex gap-3 mb-4">
                 <span class="badge bg-light text-primary border px-3 py-2">
-                    <i class="fa-solid fa-earth-americas me-2"></i>{{ $vacation->pais }}
+                    <i class="fa-solid fa-earth-americas me-2"></i>{{ $vacacion->pais }}
                 </span>
                 <span class="badge bg-light text-info border px-3 py-2">
-                    <i class="fa-solid fa-umbrella-beach me-2"></i>{{ $vacation->tipo->nombre }}
+                    <i class="fa-solid fa-umbrella-beach me-2"></i>{{ $vacacion->tipo->nombre }}
                 </span>
             </div>
 
             <h4 class="fw-bold">Sobre este viaje</h4>
-            <p class="lead text-muted mb-4">{{ $vacation->descripcion }}</p>
+            <p class="lead text-muted mb-4">{{ $vacacion->descripcion }}</p>
 
             {{-- BLOQUE DE RESERVA --}}
             <div class="card border-0 bg-light mb-4 shadow-sm" id="booking-section">
                 <div class="card-body p-4">
                     @auth
-                        @php $reserva = $vacation->reserva; @endphp
+                        @php $reserva = $vacacion->reserva; @endphp
 
                         @if(Auth::user()->hasVerifiedEmail())
                             {{-- Caso: Usuario Verificado --}}
@@ -79,7 +79,7 @@
                                     </div>
                                     <form action="{{ route('reserva.store') }}" method="POST">
                                         @csrf
-                                        <input type="hidden" name="idvacation" value="{{ $vacation->id }}">
+                                        <input type="hidden" name="idvacation" value="{{ $vacacion->id }}">
                                         <button type="submit" class="btn btn-primary px-4 shadow-sm btn-lg">
                                             <i class="fa-solid fa-calendar-check me-2"></i>Reservar ahora
                                         </button>
@@ -126,7 +126,7 @@
 
             @auth
                 @if(Auth::user()->isAdvanced())
-                    <a href="{{ route('vacation.edit', $vacation->id) }}" class="btn btn-sm btn-outline-secondary">
+                    <a href="{{ route('vacacion.edit', $vacacion->id) }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fa-solid fa-pen-to-square me-2"></i>Editar Anuncio
                     </a>
                 @endif
@@ -142,11 +142,11 @@
     <div class="col-md-10">
         <div class="d-flex align-items-center mb-4">
             <h2 class="fw-bold mb-0">Experiencias de otros viajeros</h2>
-            <span class="badge bg-primary ms-3">{{ $vacation->comentario->count() }}</span>
+            <span class="badge bg-primary ms-3">{{ $vacacion->comentario->count() }}</span>
         </div>
 
         {{-- Lista de Comentarios --}}
-        @forelse($vacation->comentario as $comentario)
+        @forelse($vacacion->comentario as $comentario)
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start">
@@ -199,7 +199,7 @@
             @auth
                 @php
                     // ¿El usuario logueado es el que ha reservado este viaje?
-                    $usuarioHaReservado = ($vacation->reserva && $vacation->reserva->iduser == Auth::id());
+                    $usuarioHaReservado = ($vacacion->reserva && $vacacion->reserva->iduser == Auth::id());
                 @endphp
 
                 @if($usuarioHaReservado)
@@ -208,7 +208,7 @@
                     <div class="py-3">
                         <i class="fa-solid fa-comment-slash fs-2 text-muted mb-3"></i>
                         <h6 class="fw-bold">Opiniones exclusivas para viajeros</h6>
-                        <p class="small text-muted mb-0">Solo los usuarios con una reserva confirmada en <strong>{{ $vacation->titulo }}</strong> pueden publicar comentarios.</p>
+                        <p class="small text-muted mb-0">Solo los usuarios con una reserva confirmada en <strong>{{ $vacacion->titulo }}</strong> pueden publicar comentarios.</p>
                     </div>
                 @endif
             @else

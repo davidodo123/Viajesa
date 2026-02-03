@@ -8,7 +8,7 @@
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('main.index') }}">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('vacation.show', $comentario->idvacation) }}">Destino</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('vacacion.show', $comentario->idvacation) }}">Destino</a></li>
                     <li class="breadcrumb-item active">Editar Comentario</li>
                 </ol>
             </nav>
@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-5">
-                            <a href="{{ route('vacation.show', $comentario->idvacation) }}" class="btn btn-link text-muted text-decoration-none">
+                            <a href="{{ route('vacacion.show', $comentario->idvacation) }}" class="btn btn-link text-muted text-decoration-none">
                                 <i class="fa-solid fa-arrow-left me-2"></i>Cancelar y volver
                             </a>
                             <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
@@ -68,8 +68,8 @@
             </div>
 
             <div class="mt-4 p-3 bg-light rounded-3 border d-flex align-items-center">
-                <i class="fa-solid fa-plane-departure text-primary me-3 fs-4"></i>
-                <span class="text-muted">Estás editando un comentario para: <strong>{{ $comentario->vacation->titulo }}</strong></span>
+               
+                <span class="text-muted">Estás editando un comentario para: <strong>{{ $comentario->vacacion->titulo }}</strong></span>
             </div>
         </div>
     </div>
