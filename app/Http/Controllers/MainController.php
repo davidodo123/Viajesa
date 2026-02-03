@@ -42,7 +42,7 @@ class MainController extends Controller
         $q = $request->q;
         $idtipo = $request->idtipo;
 
-        // 2. Construcción de la consulta
+        // Construcción de la consulta
         $query = Vacacion::query()->with(['tipo', 'foto']);
 
         // Filtro por Tipo (Categoría)
@@ -50,7 +50,7 @@ class MainController extends Controller
             $query->where('idtipo', '=', $idtipo);
         }
 
-        // Búsqueda General (Subconsulta como en tu ejemplo)
+        // Búsqueda General 
         if($q != null) {
             $query->where(function($sq) use ($q) {
                 $sq->where('titulo', 'like', '%' . $q . '%')
@@ -61,15 +61,15 @@ class MainController extends Controller
             });
         }
 
-        // 3. Ordenación dinámica
-        // Si el campo es descripción (texto largo), podríamos usar orderByRaw como en tu ejemplo
+        // Ordenación dinámica
+        // Si el campo es descripción, podríamos usar orderByRaw como en tu ejemplo
         if($campo == 'descripcion') {
             $query->orderByRaw("char_length(descripcion) $orden");
         } else {
             $query->orderBy($campo, $orden);
         }
 
-        // 4. Paginación manteniendo los filtros
+        // Paginación manteniendo los filtros
         $vacaciones = $query->paginate(6)->withQueryString();
         
         // Obtener tipos para el select (pluck devuelve formato [id => nombre])

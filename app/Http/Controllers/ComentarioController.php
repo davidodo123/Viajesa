@@ -52,18 +52,18 @@ class ComentarioController extends Controller {
     }
 
     public function store(Request $request) {
-        // 1. Validación de los datos del formulario
+        // Validación de los datos del formulario
         $request->validate([
             'content' => 'required|min:5|max:1000',
             'idvacation' => 'required|exists:vacacion,id'
         ]);
 
-        // 2. Seguridad: ¿Tiene el correo verificado?
+        // Seguridad, si tiene certificado
         if (!auth()->user()->hasVerifiedEmail()) {
             return back()->withErrors(['general' => 'Debes verificar tu correo para poder comentar.']);
         }
 
-        // 3. Seguridad: ¿Ha reservado este viaje específico?
+        // Seguridad, si ha reservado algo en especifico
         $haReservado = Reserva::where('iduser', auth()->id())
                         ->where('idvacation', $request->idvacation)
                         ->exists();
@@ -72,14 +72,14 @@ class ComentarioController extends Controller {
             return back()->withErrors(['general' => 'Solo puedes comentar en viajes que hayas reservado previamente.']);
         }
 
-        // 4. Guardamos en la base de datos
+        // Guardamos en la base de datos
         $comentario = new Comentario();
         $comentario->idvacation = $request->idvacation;
         $comentario->texto = $request->content;
         $comentario->iduser = auth()->id();
-        $comentario->save(); // <--- AQUÍ el comentario recibe su ID
+        $comentario->save();// el comentario recibe su ID
 
-        // 5. Gestión de la sesión para edición/borrado rápido
+        // Gestión de la sesión para edición/borrado rápido
         $sentComentario = session()->get('sentComentario', new SentComentario());
         $sentComentario->addComentario($comentario);
         session()->put('sentComentario', $sentComentario); 
@@ -88,12 +88,12 @@ class ComentarioController extends Controller {
     }
     
     public function update(Request $request, Comentario $comentario): RedirectResponse {
-        // 1. Validación de los datos
+        // Validación de los datos
         $request->validate([
             'texto' => 'required|string|min:5',
         ]);
 
-        // 2. Seguridad: Comprobar sesión (SentComentario) y Autoría
+        // Seguridad: Comprobar sesión (SentComentario) y Autoría
         $sentComentario = session()->get('sentComentario');
         
         // Verificamos si existe el objeto en sesión y si el comentario es "editable"
@@ -103,7 +103,7 @@ class ComentarioController extends Controller {
             ]);
         }
 
-        // Doble check: solo el dueño puede editar (aunque esté en sesión)
+        // Doble check: solo el dueño puede editar 
         if ($comentario->iduser != auth()->id()) {
             return redirect()->route('main.index')->withErrors([
                 'general' => 'Acción no autorizada.'
